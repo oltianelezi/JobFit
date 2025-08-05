@@ -13,9 +13,10 @@ public class User
     public string Industry { get; set; } = string.Empty;
     public string EducationalBg { get; set; } = string.Empty;
     public string DesiredJob { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-
-    public int YearsOfExp { get; set; }
+    public int? YearsOfExp { get; set; }
+    public string Cv { get; set; } = string.Empty;
 
 }
