@@ -94,10 +94,10 @@ const SignUpContainer = () => {
       case !formData.confirmpassword:
         enqueueSnackbar("Please enter confirm password!", { variant: "error" });
         break;
-      case formData.confirmpassword !== formData.password:
-        enqueueSnackbar("Please confirm your password appropriately", {
-          variant: "error",
-        });
+      // case formData.confirmpassword !== formData.password:
+      //   enqueueSnackbar("Please confirm your password appropriately", {
+      //     variant: "error",
+      //   });
       // case formData.password.length < 8:
       //   enqueueSnackbar("Password must have at least 8 characters", {
       //     variant: "error",

@@ -49,7 +49,7 @@ public class UserController : ControllerBase
             return BadRequest(new { message = "Empty fields" });
         }
 
-        if (_userRepository.UsernameTaken(request.username) != null)
+        if (_userRepository.UsernameTaken(request.username))
         {
             return BadRequest(new { message = "Username is already taken." });
 
@@ -63,7 +63,7 @@ public class UserController : ControllerBase
                 parsedYearsOfExp = years;
             }
         }
-        
+
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.password);
         var user = new User
         {
@@ -87,4 +87,43 @@ public class UserController : ControllerBase
 
         return Ok();
     }
+
+    public class LoginRequest
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] LoginRequest request)
+    {
+        var user = _userRepository.GetUserByUsername(request.Username);
+        if (user == null)
+        {
+            return Unauthorized(new { message = "Invalid username or password" });
+        }
+
+        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
+        if (!isPasswordValid)
+        {
+            return Unauthorized(new { message = "Invalid username or password" });
+        }
+
+        return Ok(new { message = "Login successful", userId = user.UserId });
+    }
+
+    [HttpGet("{id}")]
+    public IActionResult GetUserById(int id)
+    {
+        var user = _userRepository.GetUserById(id);
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        return Ok(user);
+    }
+
 }

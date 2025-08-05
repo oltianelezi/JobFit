@@ -47,7 +47,7 @@ public class UserRepository
         }
     }
 
-    public int? UsernameTaken(string username)
+    public bool UsernameTaken(string username)
     {
         using (var connection = SQLiteConnectionFactory.CreateConnection())
         {
@@ -56,14 +56,74 @@ public class UserRepository
             command.CommandText = "SELECT userId FROM Users WHERE username = @username";
             command.Parameters.AddWithValue("@username", username);
 
+            var count = Convert.ToInt32(command.ExecuteScalar());
+            return count > 0;
+        }
+    }
+
+    public User? GetUserByUsername(string username)
+    {
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Users WHERE username = @username LIMIT 1";
+            command.Parameters.AddWithValue("@username", username);
+
             using (var reader = command.ExecuteReader())
             {
                 if (reader.Read())
                 {
-                    return reader.GetInt32(reader.GetOrdinal("userId"));
+                    return new User
+                    {
+                        UserId = reader.GetInt32(reader.GetOrdinal("userId")),
+                        Username = reader.GetString(reader.GetOrdinal("username")),
+                        Password = reader.GetString(reader.GetOrdinal("password")),
+                        Type = reader.GetString(reader.GetOrdinal("role"))
+                    };
                 }
             }
         }
+
+        return null;
+    }
+
+    public User? GetUserById(int id)
+    {
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Users WHERE userId = @userId LIMIT 1";
+            command.Parameters.AddWithValue("@userId", id);
+
+            using (var reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    var user = new User
+                    {
+                        UserId = reader.GetInt32(reader.GetOrdinal("userId")),
+                        FirstName = reader.GetString(reader.GetOrdinal("firstName")),
+                        LastName = reader.GetString(reader.GetOrdinal("lastName")),
+                        Email = reader.GetString(reader.GetOrdinal("email")),
+                        PhoneNumber = reader.GetString(reader.GetOrdinal("phoneNumber")),
+                        Type = reader.GetString(reader.GetOrdinal("role")),
+                        Username = reader.GetString(reader.GetOrdinal("username")),
+                        CurrJobTitle = reader.GetString(reader.GetOrdinal("currJobTitle")),
+                        DesiredJob = reader.GetString(reader.GetOrdinal("desiredJob")),
+                        Industry = reader.GetString(reader.GetOrdinal("industry")),
+                        EducationalBg = reader.GetString(reader.GetOrdinal("educationalBg")),
+                        Cv = reader.GetString(reader.GetOrdinal("cv")),
+                        YearsOfExp = reader.IsDBNull(reader.GetOrdinal("yearsOfExp"))
+                     ? (int?)null
+                     : reader.GetInt32(reader.GetOrdinal("yearsOfExp"))
+                    };
+                    return user;
+                }
+            }
+        }
+
         return null;
     }
 }
