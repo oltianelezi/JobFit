@@ -17,7 +17,7 @@ public class UserController : ControllerBase
     {
         _userRepository = new UserRepository();
     }
-    
+
     public class SignupRequest
     {
         public string firstname { get; set; } = string.Empty;
@@ -30,7 +30,6 @@ public class UserController : ControllerBase
         public string desiredjob { get; set; } = string.Empty;
         public string username { get; set; } = string.Empty;
         public string password { get; set; } = string.Empty;
-        public string confirmpassword { get; set; } = string.Empty;
         public string cv { get; set; } = string.Empty;
         public string phonenumber { get; set; } = string.Empty;
         public string yearsofexp { get; set; } = string.Empty;
@@ -118,7 +117,58 @@ public class UserController : ControllerBase
             return NotFound(new { message = "User not found" });
         }
 
-        return Ok(user);
+        return Ok(new
+        {
+            firstname = user.FirstName,
+            lastname = user.LastName,
+            email = user.Email,
+            phonenumber = user.PhoneNumber,
+            currjobtitle = user.CurrJobTitle,
+            industry = user.Industry,
+            yearsofexp = user.YearsOfExp,
+            educationalbg = user.EducationalBg,
+            desiredjob = user.DesiredJob,
+            type = user.Type,
+            cv = user.Cv
+        });
+    }
+
+    public class UpdateRequest
+    {
+        public string firstname { get; set; } = string.Empty;
+        public string lastname { get; set; } = string.Empty;
+        public string email { get; set; } = string.Empty;
+        public string currjobtitle { get; set; } = string.Empty;
+        public string industry { get; set; } = string.Empty;
+        public string educationalbg { get; set; } = string.Empty;
+        public string desiredjob { get; set; } = string.Empty;
+        public string cv { get; set; } = string.Empty;
+        public string phonenumber { get; set; } = string.Empty;
+        public int yearsofexp { get; set; }
+        public int userId { get; set; }
+    }
+
+    [HttpPut("update")]
+    public IActionResult UpdateUser([FromBody] UpdateRequest request)
+    {
+        var user = new User
+        {
+            PhoneNumber = request.phonenumber,
+            FirstName = request.firstname,
+            LastName = request.lastname,
+            Email = request.email,
+            CurrJobTitle = request.currjobtitle,
+            Industry = request.industry,
+            EducationalBg = request.educationalbg,
+            DesiredJob = request.desiredjob,
+            Cv = request.cv,
+            YearsOfExp = request.yearsofexp,
+            UserId = request.userId
+        };
+
+        _userRepository.updateUser(user);
+
+        return Ok();
     }
 
 }

@@ -24,9 +24,8 @@ const Horizontal = () => {
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data); 
       
-      setUsername(data.firstName + " " + data.lastName);
+      setUsername(data.firstname + " " + data.lastname);
       setUserType(data.type);
     }
   };
