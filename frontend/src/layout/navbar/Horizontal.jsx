@@ -6,8 +6,7 @@ import { IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useContext } from "react";
 import { AppContext } from "../../AppContext";
-import db from "../../firebase.js";
-import { getDoc, doc } from "firebase/firestore";
+
 
 const Horizontal = () => {
   const {

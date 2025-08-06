@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Form from "../components/shared/Form";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  deleteDoc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
-import db from "../firebase";
+
 import JobCard from "../components/shared/JobCard";
 import Modal from "../components/shared/Modal";
 import { useSnackbar } from "notistack";

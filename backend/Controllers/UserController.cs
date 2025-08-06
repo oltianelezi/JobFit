@@ -17,12 +17,7 @@ public class UserController : ControllerBase
     {
         _userRepository = new UserRepository();
     }
-    [HttpGet("test")]
-    public IActionResult Test()
-    {
-        return Ok();
-    }
-
+    
     public class SignupRequest
     {
         public string firstname { get; set; } = string.Empty;

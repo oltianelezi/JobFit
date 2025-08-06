@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import Form from "../components/shared/Form";
-import { collection, addDoc } from "firebase/firestore";
-import db from "../firebase";
+
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
 const AddJobContainer = () => {
-  const userId = localStorage.getItem("userId");
+  const userId = parseInt(localStorage.getItem("userId"), 10);
   const { enqueueSnackbar } = useSnackbar();
 
   const { displayNavbar } = useContext(AppContext);
@@ -18,7 +17,6 @@ const AddJobContainer = () => {
     jobstatus: "Open",
     jobtype: "Full - Time",
     userId: userId,
-    apply: [],
   });
 
   const handleChange = (event, name) => {
@@ -34,16 +32,23 @@ const AddJobContainer = () => {
       addJobForm.jobstatus &&
       addJobForm.joblocation
     ) {
-      const date = new Date().toDateString();
-      const collectionRef = collection(db, "Jobs");
+      const date = new Date().toISOString().split('T')[0];  // This returns "2025-08-06"
       const payload = { ...addJobForm, date };
-      await addDoc(collectionRef, payload)
-        .then(() => {
-          enqueueSnackbar("Job added successfully", { variant: "success" });
-        })
-        .catch((error) => {
-          enqueueSnackbar("Something went wrong!", { variant: "error" });
-        });
+      const response = await fetch("https://localhost:7000/job/addJob",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        }
+      )
+      if (response.ok) {
+        enqueueSnackbar("Job added successfully", { variant: "success" });
+      }
+      else {
+        enqueueSnackbar("Something went wrong!", { variant: "error" });
+      }
       setAddJobForm({
         position: "",
         company: "",
@@ -64,10 +69,10 @@ const AddJobContainer = () => {
       style={
         displayNavbar
           ? {
-              width: "calc(100% - 172px)",
-              marginLeft: "166px",
-              marginTop: "16px",
-            }
+            width: "calc(100% - 172px)",
+            marginLeft: "166px",
+            marginTop: "16px",
+          }
           : { width: "99%", marginTop: "16px", marginLeft: "8px" }
       }
     >

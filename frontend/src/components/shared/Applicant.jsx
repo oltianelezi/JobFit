@@ -5,8 +5,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React, { useEffect, useState } from "react";
-import db from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+
 import Modal from "./Modal";
 import Calendar from "./Calendar";
 
