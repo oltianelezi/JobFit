@@ -4,8 +4,7 @@ import JobSearchImage from "../assets/images/job_search.png";
 import TextInput from "../components/shared/TextInput";
 import Button from "../components/shared/Button";
 import { useSnackbar } from "notistack";
-import db from "../firebase";
-import { query, where, collection, getDocs } from "firebase/firestore";
+
 import { useNavigate } from "react-router-dom";
 
 const SignInContainer = () => {
