@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
 const AddJobContainer = () => {
-  const userId = parseInt(localStorage.getItem("userId"), 10);
+  const userId = localStorage.getItem("userId");
   const { enqueueSnackbar } = useSnackbar();
 
   const { displayNavbar } = useContext(AppContext);

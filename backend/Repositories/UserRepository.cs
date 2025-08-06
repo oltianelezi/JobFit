@@ -126,4 +126,44 @@ public class UserRepository
 
         return null;
     }
+
+    public void updateUser(User user)
+    {
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+
+            command.CommandText = @"
+                UPDATE Users
+            SET
+                email = @email,
+                firstName = @firstName,
+                lastName = @lastName,
+                currJobTitle = @currJobTitle,
+                desiredJob = @desiredJob,
+                industry = @industry,
+                educationalBg = @educationalBg,
+                yearsOfExp = @yearsOfExp,
+                cv = @cv,
+                phoneNumber = @phoneNumber
+            WHERE userId = @userId;
+                ";
+            command.Parameters.AddWithValue("@email", user.Email);
+            command.Parameters.AddWithValue("@firstName", user.FirstName);
+            command.Parameters.AddWithValue("@lastName", user.LastName);
+            command.Parameters.AddWithValue("@currJobTitle", user.CurrJobTitle ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@desiredJob", user.DesiredJob ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@industry", user.Industry ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@educationalBg", user.EducationalBg ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@yearsOfExp", user.YearsOfExp ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@cv", user.Cv ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@phoneNumber", user.PhoneNumber ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@userId", user.UserId);
+
+            command.ExecuteNonQuery();
+
+        }
+
+    }
 }

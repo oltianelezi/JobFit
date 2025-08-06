@@ -44,3 +44,5 @@ packages/
 # System files
 Thumbs.db
 Desktop.ini
+
+.fake
