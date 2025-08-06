@@ -21,13 +21,14 @@ const Horizontal = () => {
   const fetchData = async () => {
     const userId = localStorage.getItem("userId");
 
-    const docRef = doc(db, "users", userId);
-    const docSnap = await getDoc(docRef);
+    const response = await fetch(`https://localhost:7000/user/${userId}`);
 
-    if (docSnap.exists()) {
-      const finalResult = docSnap.data();
-      setUsername(finalResult.firstname);
-      setUserType(finalResult.type);
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data); 
+      
+      setUsername(data.firstName + " " + data.lastName);
+      setUserType(data.type);
     }
   };
 

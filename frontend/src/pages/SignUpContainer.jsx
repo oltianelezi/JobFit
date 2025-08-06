@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import db from "../firebase";
 import "./style/SignUpContainer.css";
 import JobSearchImage from "../assets/images/job_search.png";
 import Button from "../components/shared/Button";
@@ -7,7 +6,6 @@ import { useSnackbar } from "notistack";
 import User from "./SignUp/User";
 import PersonalInformation from "./SignUp/PersonalInformation";
 import Account from "./SignUp/Account";
-import { collection, addDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/shared/Modal";
 import CVSend from "./CVSend";
@@ -53,14 +51,29 @@ const SignUpContainer = () => {
   };
 
   const postData = async () => {
-    console.log("1");
-    const collectionRef = collection(db, "users");
-    const payload = formData;
-    await addDoc(collectionRef, payload);
-    enqueueSnackbar("User created successfully!", {
-      variant: "success",
-    });
-    navigate("/");
+    var response = await fetch("https://localhost:7000/user/signup",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      }
+    )
+    console.log(formData);
+
+    if (!response.ok) {
+      var msg = await response.json();
+      enqueueSnackbar(msg.message, {
+        variant: "error",
+      });
+    }
+    else {
+      enqueueSnackbar("User created successfully!", {
+        variant: "success",
+      });
+      // navigate("/");
+    }
   };
 
   const handleSubmit = (e) => {
@@ -81,32 +94,31 @@ const SignUpContainer = () => {
       case !formData.confirmpassword:
         enqueueSnackbar("Please enter confirm password!", { variant: "error" });
         break;
-      case formData.confirmpassword !== formData.password:
-        enqueueSnackbar("Please confirm your password appropriately", {
-          variant: "error",
-        });
-      case formData.password.length < 8:
-        enqueueSnackbar("Password must have at least 8 characters", {
-          variant: "error",
-        });
-        break;
-      case (!formData.currjobtitle ||
-        !formData.industry ||
-        !formData.yearsofexp ||
-        !formData.educationalbg ||
-        !formData.desiredjob) &&
-        formData.type === "Employee":
-        enqueueSnackbar("Please complete Proffesional Information section!", {
-          variant: "error",
-        });
-        break;
-      case !formData.cv && formData.type === "Employee":
-        enqueueSnackbar("Please upload your CV!", {
-          variant: "error",
-        });
-        break;
+      // case formData.confirmpassword !== formData.password:
+      //   enqueueSnackbar("Please confirm your password appropriately", {
+      //     variant: "error",
+      //   });
+      // case formData.password.length < 8:
+      //   enqueueSnackbar("Password must have at least 8 characters", {
+      //     variant: "error",
+      //   });
+      //   break;
+      // case (!formData.currjobtitle ||
+      //   !formData.industry ||
+      //   !formData.yearsofexp ||
+      //   !formData.educationalbg ||
+      //   !formData.desiredjob) &&
+      //   formData.type === "Employee":
+      //   enqueueSnackbar("Please complete Proffesional Information section!", {
+      //     variant: "error",
+      //   });
+      //   break;
+      // case !formData.cv && formData.type === "Employee":
+      //   enqueueSnackbar("Please upload your CV!", {
+      //     variant: "error",
+      //   });
+      //   break;
       default:
-        console.log("adsdsadsa");
         postData();
     }
 

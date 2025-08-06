@@ -22,26 +22,34 @@ const SignInContainer = () => {
   const handleSubmit = async (e) => {
     setIsLoading(true);
     if (formData.username && formData.password) {
-      const response = query(
-        collection(db, "users"),
-        where("username", "==", formData.username),
-        where("password", "==", formData.password)
-      );
-      const result = await getDocs(response);
-      if (result.docs.length > 0) {
-        const userData = result.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        if (userData[0].id) {
-          localStorage.setItem("userId", userData[0].id);
-          setIsLoading(false);
-          navigate("/jobs");
+      // const response = query(
+      //   collection(db, "users"),
+      //   where("username", "==", formData.username),
+      //   where("password", "==", formData.password)
+      // );
+
+      const response = await fetch("https://localhost:7000/user/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
         }
-      } else {
+      )
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem("userId", data.userId);
+        setIsLoading(false);
+        navigate("/jobs");
+        console.log(data.userId);
+        
+      }
+      else {
         enqueueSnackbar("User not found!", { variant: "error" });
         setIsLoading(false);
       }
+
     } else {
       enqueueSnackbar("Please fill in the fields!", { variant: "error" });
       setIsLoading(false);
