@@ -43,7 +43,7 @@ const SearchContainer = () => {
 
   const handleSubmit = () => {
     if (searchForm.search || searchForm.jobstatus || searchForm.jobtype) {
-      fetchData({ applyFilter: true });
+      fetchData();
     }
   };
 
@@ -52,12 +52,13 @@ const SearchContainer = () => {
       if (
         !searchForm.search &&
         searchForm.jobstatus === "Any" &&
-        searchForm.jobtype === "Any"
+        searchForm.jobtype === "Any" &&
+        userType
       ) {
-        fetchData({ applyFilter: false });
+        fetchData();
       }
     },
-    /*eslint-disable*/ [
+    /*eslint-disable*/[
       searchForm.search,
       searchForm.jobstatus,
       searchForm.jobtype,
@@ -65,59 +66,35 @@ const SearchContainer = () => {
     ]
   );
 
-  const handleQueryWithFilter = () => {
-    const userId = localStorage.getItem("userId");
 
-    let queryWithFilter = collection(db, "Jobs");
-    const filters = [];
-
-    if (searchForm.search) {
-      filters.push(where("company", "==", searchForm.search));
+  const fetchData = async () => {
+    const payload = {
+      ...searchForm,
+      userId: userId,
+      userType: userType
     }
+    const response = await fetch("https://localhost:7000/job/getJobs",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
 
-    if (searchForm.jobstatus && searchForm.jobstatus !== "Any") {
-      filters.push(where("jobstatus", "==", searchForm.jobstatus));
-    }
+    const result = await response.json();
+    console.log(result);
 
-    if (searchForm.jobtype && searchForm.jobtype !== "Any") {
-      filters.push(where("jobtype", "==", searchForm.jobtype));
-    }
-    if (userType === "Employer") {
-      filters.push(where("userId", "==", userId));
-    }
-
-    if (filters.length > 0) {
-      queryWithFilter = query(queryWithFilter, ...filters);
-    }
-    return queryWithFilter;
-  };
-
-  const fetchData = async ({ applyFilter }) => {
-    const queryForEmployeeWithoutFilter = query(collection(db, "Jobs"));
-
-    const queryWithFilter = handleQueryWithFilter();
-
-    const queryWithoutFilter = query(
-      collection(db, "Jobs"),
-      where("userId", "==", userId)
-    );
-
-    const queryForFilter =
-      userType === "Employee"
-        ? applyFilter
-          ? queryWithFilter
-          : queryForEmployeeWithoutFilter
-        : applyFilter
-        ? queryWithFilter
-        : queryWithoutFilter;
-
-    const result = await getDocs(queryForFilter);
-    const finalResult = result.docs.map((doc) => {
-      return {
-        ...doc.data(),
-        id: doc.id,
-      };
-    });
+    const finalResult = result.map(job => ({
+      position: job.position,
+      company: job.company,
+      joblocation: job.location,
+      date: job.datePosted,
+      jobtype: job.jobtype,
+      jobstatus: job.jobstatus,
+      jobId: job.jobId,
+      userId: job.userId
+    }))
     setSearchResult(finalResult);
   };
 
@@ -194,21 +171,21 @@ const SearchContainer = () => {
       style={
         displayNavbar
           ? {
-              width: "calc(100% - 172px)",
-              marginLeft: "166px",
-              marginTop: "16px",
-              backgroundColor: "#344966",
-              borderRadius: "10px",
-              height: "calc(100vh - 90px)",
-            }
+            width: "calc(100% - 172px)",
+            marginLeft: "166px",
+            marginTop: "16px",
+            backgroundColor: "#344966",
+            borderRadius: "10px",
+            height: "calc(100vh - 90px)",
+          }
           : {
-              width: "99%",
-              marginTop: "16px",
-              marginLeft: "8px",
-              backgroundColor: "#344966",
-              borderRadius: "10px",
-              height: "calc(100vh - 90px)",
-            }
+            width: "99%",
+            marginTop: "16px",
+            marginLeft: "8px",
+            backgroundColor: "#344966",
+            borderRadius: "10px",
+            height: "calc(100vh - 90px)",
+          }
       }
     >
       <div

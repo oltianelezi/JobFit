@@ -87,6 +87,7 @@ const Form = ({
               <select
                 style={{ ...style }}
                 name={field.name}
+                value={state[fieldName]}
                 id={field.name}
                 onChange={(event) => handleChange(event, fieldName)}
               >

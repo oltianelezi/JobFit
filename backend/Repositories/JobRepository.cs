@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using backend.Models;
 using backend.Data;
+using backend.DTOs.Job;
 namespace backend.Repositories;
 
 public class JobRepository
@@ -29,5 +30,66 @@ public class JobRepository
 
             command.ExecuteNonQuery();
         }
+    }
+
+    public List<Job> getJobs(SearchQueryRequest filter)
+    {
+        var jobs = new List<Job>();
+
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            var query = "SELECT * FROM Jobs WHERE 1=1 ";
+
+            if (filter.userType == "Employer")
+            {
+                query += " AND userId = @userId ";
+                command.Parameters.AddWithValue("@userId", filter.userId);
+            }
+
+            if (!string.IsNullOrEmpty(filter.search))
+            {
+                query += " AND company = @company ";
+                command.Parameters.AddWithValue("@company", filter.search);
+
+            }
+
+            if (filter.jobstatus != "Any")
+            {
+                query += " AND jobStatus = @jobStatus ";
+                command.Parameters.AddWithValue("@jobStatus", filter.jobstatus);
+
+            }
+
+            if (filter.jobtype != "Any")
+            {
+                query += " AND jobType = @jobType ";
+                command.Parameters.AddWithValue("@jobType", filter.jobtype);
+
+            }
+
+
+            command.CommandText = query;
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    jobs.Add(new Job
+                    {
+                        Position = reader.GetString(0),
+                        Company = reader.GetString(1),
+                        Location = reader.GetString(2),
+                        DatePosted = DateOnly.Parse(reader.GetString(3)),
+                        JobId = reader.GetInt32(4),
+                        UserId = reader.GetInt32(5),
+                        Jobstatus = reader.GetString(6),
+                        Jobtype = reader.GetString(7)
+                    });
+                }
+            }
+        }
+        return jobs;
     }
 }
