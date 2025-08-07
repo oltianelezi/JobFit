@@ -34,7 +34,7 @@ const SignUpContainer = () => {
     type: "Employee",
     currjobtitle: "",
     industry: "",
-    yearsofexp: "",
+    yearsofexp: 0,
     educationalbg: "",
     desiredjob: "",
     username: "",
@@ -46,7 +46,10 @@ const SignUpContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (event, name) => {
-    const value = event.target.value;
+    let value = event.target.value;
+    if (name === "yearsofexp") {
+      value = Number(value);
+    }
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
@@ -72,7 +75,7 @@ const SignUpContainer = () => {
       enqueueSnackbar("User created successfully!", {
         variant: "success",
       });
-      // navigate("/");
+      navigate("/");
     }
   };
 

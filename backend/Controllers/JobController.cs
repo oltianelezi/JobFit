@@ -1,7 +1,9 @@
 using backend.Models;
+using backend.DTOs;
 using backend.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using backend.DTOs.Job;
 
 namespace backend.Controllers;
 
@@ -16,16 +18,7 @@ public class JobController : ControllerBase
         _jobRepository = new JobRepository();
     }
 
-    public class AddJobRequest
-    {
-        public string position { get; set; } = string.Empty;
-        public string company { get; set; } = string.Empty;
-        public string joblocation { get; set; } = string.Empty;
-        public string jobstatus { get; set; } = string.Empty;
-        public string jobtype { get; set; } = string.Empty;
-        public DateOnly date { get; set; }
-        public int userId { get; set; }
-    }
+
 
     [HttpPost("addJob")]
     public IActionResult AddJob([FromBody] AddJobRequest request)
@@ -46,8 +39,15 @@ public class JobController : ControllerBase
             UserId = request.userId
         };
 
-         _jobRepository.AddJob(job);
+        _jobRepository.AddJob(job);
 
         return Ok();
+    }
+
+    [HttpPost("getJobs")]
+    public IActionResult getJobs([FromBody] SearchQueryRequest request)
+    {
+        var jobs = _jobRepository.getJobs(request);
+        return Ok(jobs);
     }
 }

@@ -32,7 +32,7 @@ const AddJobContainer = () => {
       addJobForm.jobstatus &&
       addJobForm.joblocation
     ) {
-      const date = new Date().toISOString().split('T')[0];  // This returns "2025-08-06"
+      const date = new Date().toISOString().split('T')[0];
       const payload = { ...addJobForm, date };
       const response = await fetch("https://localhost:7000/job/addJob",
         {

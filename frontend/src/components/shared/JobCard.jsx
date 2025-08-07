@@ -12,7 +12,8 @@ const JobCard = ({
   const userId = localStorage.getItem("userId");
 
   const applyCheck = useCallback(() => {
-    const userApplied = appliers.includes(userId);
+    // const userApplied = appliers.includes(userId);
+    const userApplied = false;
 
     return (
       <Button
@@ -31,7 +32,7 @@ const JobCard = ({
         }
       />
     );
-  },[item.id, appliers, handleApply, userId]);
+  }, [item.id, appliers, handleApply, userId]);
 
   const buttonConfig = useCallback(() => {
     if (userType === "Employee") {
@@ -84,7 +85,7 @@ const JobCard = ({
         </div>
       );
     }
-  },[applyCheck, item.id, handleApplicants, handleEdit, userType]);
+  }, [applyCheck, item.id, handleApplicants, handleEdit, userType]);
 
   return (
     <div className="card">
