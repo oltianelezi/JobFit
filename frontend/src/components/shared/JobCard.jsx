@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Button from "./Button.jsx";
 
 const JobCard = ({
@@ -7,14 +7,49 @@ const JobCard = ({
   handleApplicants,
   handleApply,
   userType,
-  appliers,
 }) => {
   const userId = localStorage.getItem("userId");
+  const [userApplied, setUserApplied] = useState(false);
+
+  const checkApplied = useCallback(async () => {
+    const payload = {
+      userId,
+      jobId: item.jobId
+    };
+
+    try {
+      const response = await fetch('https://localhost:7000/application/applyCheck', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      setUserApplied(data.applied);
+    } catch (err) {
+      console.error("Error checking application status", err);
+    }
+  }, [userId, item.jobId]);
+
+  useEffect(() => {
+    checkApplied();
+  }, [checkApplied]);
+
+  const handleApplyClick = async (jobId) => {
+    try {
+      await handleApply(jobId);
+      // Re-check the application status after applying
+      await checkApplied();
+    } catch (err) {
+      console.error("Error applying to job", err);
+    }
+  };
 
   const applyCheck = useCallback(() => {
-    // const userApplied = appliers.includes(userId);
-    const userApplied = false;
-
+    checkApplied();
     return (
       <Button
         name={userApplied ? "Applied" : "Apply"}
@@ -28,11 +63,11 @@ const JobCard = ({
           color: "white",
         }}
         handleClick={() =>
-          !userApplied ? handleApply(item.id) : console.log("")
+          !userApplied ? handleApplyClick(item.jobId) : console.log("")
         }
       />
     );
-  }, [item.id, appliers, handleApply, userId]);
+  }, [item.jobId, handleApply, userId, userApplied]);
 
   const buttonConfig = useCallback(() => {
     if (userType === "Employee") {
@@ -67,7 +102,7 @@ const JobCard = ({
               borderRadius: "10px",
               color: "white",
             }}
-            handleClick={() => handleEdit(item.id)}
+            handleClick={() => handleEdit(item.jobId)}
           />
           <Button
             name="Applicants"
@@ -80,12 +115,12 @@ const JobCard = ({
               borderRadius: "10px",
               color: "white",
             }}
-            handleClick={() => handleApplicants(item.id)}
+            handleClick={() => handleApplicants(item.jobId)}
           />
         </div>
       );
     }
-  }, [applyCheck, item.id, handleApplicants, handleEdit, userType]);
+  }, [applyCheck, item.jobId, handleApplicants, handleEdit, userType]);
 
   return (
     <div className="card">
