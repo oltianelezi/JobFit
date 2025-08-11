@@ -19,10 +19,10 @@ const Applicant = ({ user }) => {
   };
 
   const fetchApplicant = async (userId) => {
-    const docRef = doc(db, "users", userId);
-    const docSnap = await getDoc(docRef);
-    const profile = docSnap.data();
-    setApplicant(profile);
+    const response = await fetch(`https://localhost:7000/user/${userId}`);
+    const data = await response.json();
+    
+    setApplicant(data);
   };
 
   useEffect(() => {
@@ -33,8 +33,8 @@ const Applicant = ({ user }) => {
     let pdfWindow = window.open("");
     pdfWindow.document.write(
       "<iframe width='100%' height='100%' src='" +
-        encodeURI(applicant.cv) +
-        "'></iframe>"
+      encodeURI(applicant.cv) +
+      "'></iframe>"
     );
   }
 

@@ -49,4 +49,33 @@ public class ApplicationRepository
             return count > 0;
         }
     }
+
+    public List<int> GetApplicants(int JobId)
+    {
+        List<int> Applicants = new List<int>();
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+
+            command.CommandText = @"
+            SELECT userId 
+            FROM Applications 
+            WHERE jobId = @jobId
+            ";
+
+            command.Parameters.AddWithValue("@jobId", JobId);
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    Applicants.Add(reader.GetInt32(0));
+                }
+            }
+        }
+
+        return Applicants;
+
+    }
 }

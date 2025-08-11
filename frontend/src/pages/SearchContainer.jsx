@@ -166,7 +166,7 @@ const SearchContainer = () => {
       jobId: jobId
     }
     console.log(payload);
-    
+
     const response = await fetch('https://localhost:7000/application/apply', {
       method: "POST",
       headers: {
@@ -185,12 +185,16 @@ const SearchContainer = () => {
   };
 
   const handleApplicants = async (jobId) => {
-    const docRef = doc(db, "Jobs", jobId);
-    const docSnap = await getDoc(docRef);
-    const applicants = docSnap.data().apply;
+
+    const response = await fetch(`https://localhost:7000/application/applicants/${jobId}`)
+    const data = await response.json();
+
+    console.log(data);
+    console.log(data.applicants);
+
 
     setShowApplicants(true);
-    setApplicants(applicants);
+    setApplicants(data.applicants);
   };
 
   const closeApplicants = () => {
