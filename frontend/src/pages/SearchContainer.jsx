@@ -99,25 +99,34 @@ const SearchContainer = () => {
   };
 
   const handleDelete = async () => {
-    await deleteDoc(doc(db, "Jobs", jobToUpdate));
-    fetchData({ applyFilter: false });
+
+    const response = await fetch(`https://localhost:7000/job/${jobToUpdate}`, {
+      method: "DELETE"
+    })
+
+    if (response.ok) {
+      enqueueSnackbar("Job deleted successfully", { variant: "success" });
+    }
+    else
+      enqueueSnackbar("Something went wrong!", { variant: "error" });
+
+    fetchData();
     setShowModal(false);
   };
 
   const handleEdit = async (jobId) => {
     setJobToUpdate(jobId);
-    const docRef = doc(db, "Jobs", jobId);
-    const docSnap = await getDoc(docRef);
-    const job = docSnap.data();
+    console.log(jobId);
 
-    const { position, company, joblocation, jobstatus, jobtype } = job;
+    const response = await fetch(`https://localhost:7000/job/${jobId}`);
+    const data = await response.json();
 
     setEditJobForm({
-      position: position,
-      company: company,
-      joblocation: joblocation,
-      jobstatus: jobstatus,
-      jobtype: jobtype,
+      position: data.position,
+      company: data.company,
+      joblocation: data.location,
+      jobstatus: data.jobstatus,
+      jobtype: data.jobtype
     });
     setShowModal(true);
   };
@@ -126,17 +135,24 @@ const SearchContainer = () => {
     setShowModal(false);
   };
 
-  const handleEditSubmit = () => {
-    const docRef = doc(db, "Jobs", jobToUpdate);
-    updateDoc(docRef, { ...editJobForm })
-      .then(() => {
-        setShowModal(false);
-        enqueueSnackbar("Job updated successfully", { variant: "success" });
-        fetchData({ applyFilter: false });
-      })
-      .catch((error) => {
-        enqueueSnackbar("Something went wrong!", { variant: "error" });
-      });
+  const handleEditSubmit = async () => {
+
+    const payload = { ...editJobForm, jobId: jobToUpdate };
+    const response = await fetch("https://localhost:7000/job/update", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if (response.ok) {
+      setShowModal(false);
+      enqueueSnackbar("Job updated successfully", { variant: "success" });
+      fetchData();
+    }
+    else
+      enqueueSnackbar("Something went wrong!", { variant: "error" });
   };
 
   const handleJobUpdate = (event, name) => {
@@ -145,12 +161,27 @@ const SearchContainer = () => {
   };
 
   const handleApply = async (jobId) => {
-    const docRef = doc(db, "Jobs", jobId);
+    const payload = {
+      userId: userId,
+      jobId: jobId
+    }
+    console.log(payload);
+    
+    const response = await fetch('https://localhost:7000/application/apply', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
 
-    await updateDoc(docRef, {
-      apply: arrayUnion(userId),
-    });
-    fetchData({ applyFilter: false });
+    if (response.ok) {
+      enqueueSnackbar("Applied to job successfully successfully", { variant: "success" });
+      fetchData();
+    }
+    else {
+      enqueueSnackbar("Application failed", { variant: "error" });
+    }
   };
 
   const handleApplicants = async (jobId) => {
@@ -240,7 +271,6 @@ const SearchContainer = () => {
                   handleEdit={handleEdit}
                   userType={userType}
                   handleApply={handleApply}
-                  appliers={result.apply}
                   key={index}
                 />
               );
