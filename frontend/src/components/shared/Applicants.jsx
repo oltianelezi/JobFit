@@ -36,7 +36,7 @@ const Applicants = ({ applicants, closeApplicants }) => {
           className="applicantsList"
           style={{ maxHeight: "300px", overflowY: "auto" }}
         >
-          {applicants.map((applicant) => {
+          {applicants.map((applicant) => {            
             return <Applicant user={applicant} />;
           })}
         </div>

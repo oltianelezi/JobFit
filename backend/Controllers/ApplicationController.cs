@@ -32,5 +32,13 @@ namespace backend.Controllers
 
             return Ok(new { applied = check });
         }
+
+        [HttpGet("applicants/{JobId}")]
+        public IActionResult GetApplicants(int JobId)
+        {
+            var Applicants = _applicationRepository.GetApplicants(JobId);
+
+            return Ok(new { applicants = Applicants });
+        }
     }
 }
