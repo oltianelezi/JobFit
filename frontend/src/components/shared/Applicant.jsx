@@ -8,8 +8,9 @@ import React, { useEffect, useState } from "react";
 
 import Modal from "./Modal";
 import Calendar from "./Calendar";
+import { enqueueSnackbar } from "notistack";
 
-const Applicant = ({ user }) => {
+const Applicant = ({ user, jobId }) => {
   const [applicant, setApplicant] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -18,10 +19,32 @@ const Applicant = ({ user }) => {
     setShowModal(false);
   };
 
+  const submitSelectedDate = async (interviewDate) => {
+    setSelectedDate(interviewDate);
+
+    const payload = {
+      UserId: user,
+      JobId: jobId,
+      InterviewDate: interviewDate
+    };    
+
+    const response = await fetch('https://localhost:7000/application/setInterviewDate', {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if(response.ok){
+      enqueueSnackbar("Interview Date set successfully", { variant: "success" });
+    }
+  }
+
   const fetchApplicant = async (userId) => {
     const response = await fetch(`https://localhost:7000/user/${userId}`);
     const data = await response.json();
-    
+
     setApplicant(data);
   };
 
@@ -140,7 +163,7 @@ const Applicant = ({ user }) => {
             <div style={{ display: "flex", justifyContent: "center" }}>
               <Calendar
                 onClose={closeModal}
-                setSelectedDate={setSelectedDate}
+                setSelectedDate={submitSelectedDate}
               />
             </div>
           </Modal>
