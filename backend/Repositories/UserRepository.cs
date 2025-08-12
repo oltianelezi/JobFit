@@ -166,4 +166,38 @@ public class UserRepository
         }
 
     }
+
+    public int? GetEmployerInfo(int JobId)
+    {
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+
+            command.CommandText = @"
+            SELECT u.*
+            FROM Jobs j
+            JOIN Users u ON j.userId = u.userId
+            WHERE j.jobId = @jobId;
+            ";
+
+            command.Parameters.AddWithValue("@jobId", JobId);
+
+            using (var reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    var user = new User
+                    {
+                        UserId = reader.GetInt32(reader.GetOrdinal("userId")),
+                        FirstName = reader.GetString(reader.GetOrdinal("firstName")),
+                        LastName = reader.GetString(reader.GetOrdinal("lastName")),
+                        Email = reader.GetString(reader.GetOrdinal("email")),
+                    };
+                    return user.UserId;
+                }
+            }
+        }
+        return null;
+    }
 }

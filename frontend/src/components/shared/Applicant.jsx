@@ -26,7 +26,7 @@ const Applicant = ({ user, jobId }) => {
       UserId: user,
       JobId: jobId,
       InterviewDate: interviewDate
-    };    
+    };
 
     const response = await fetch('https://localhost:7000/application/setInterviewDate', {
       method: "PUT",
@@ -36,12 +36,13 @@ const Applicant = ({ user, jobId }) => {
       body: JSON.stringify(payload)
     })
 
-    if(response.ok){
+    if (response.ok) {
       enqueueSnackbar("Interview Date set successfully", { variant: "success" });
     }
   }
 
   const fetchApplicant = async (userId) => {
+
     const response = await fetch(`https://localhost:7000/user/${userId}`);
     const data = await response.json();
 
@@ -63,11 +64,31 @@ const Applicant = ({ user, jobId }) => {
 
   return (
     <div style={{ marginTop: "8px" }}>
-      <Accordion>
+      <Accordion
+        disabled={applicant?.type === "employer"}
+        sx={{
+          '&.Mui-disabled': {
+            backgroundColor: 'white',
+            color: 'black',
+            opacity: 1,
+            pointerEvents: 'none',
+            '& *': {
+              color: 'black',
+              opacity: 1,
+            },
+          },
+          '&.Mui-disabled .MuiAccordionSummary-expandIconWrapper': {
+            color: 'black',
+            opacity: 1,
+          },
+        }}
+      >
+
+
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls='panel1a-content'
-          id='panel1a-header'
+          expandIcon={applicant?.type !== "Employer" ? <ExpandMoreIcon /> : null}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
         >
           {applicant?.firstname && (
             <Typography>
@@ -75,102 +96,108 @@ const Applicant = ({ user, jobId }) => {
             </Typography>
           )}
         </AccordionSummary>
-        <AccordionDetails>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={4}>
-              <center>
-                Phone Number
-                <br />
-                <strong>{applicant?.phonenumber}</strong>
-              </center>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <center>
-                Current Job <br />
-                <strong>{applicant?.currjobtitle}</strong>
-              </center>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <center>
-                Desired job <br />
-                <strong>{applicant?.desiredjob}</strong>
-              </center>
-            </Grid>
 
-            <Grid item xs={12} sm={6} md={4}>
-              <center>
-                Years of experience <br />
-                <strong>{applicant?.yearsofexp}</strong>
-              </center>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <center>
-                Educational Background <br />
-                <strong>{applicant?.educationalbg}</strong>
-              </center>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <center>
-                Industry <br />
-                <strong>{applicant?.industry}</strong>
-              </center>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              onClick={openCV}
-              sx={{ cursor: "pointer", color: "blue", textDecoration: "none" }}
-            >
-              <center>
-                Open CV <br />
-              </center>
-            </Grid>
-          </Grid>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              gap: "2px",
-              marginTop: "14px",
-              marginRight: "40px",
-            }}
-            onClick={() => setShowModal(true)}
-          >
-            <div>
-              <div>
-                <strong>
-                  Selected Date: {selectedDate ? selectedDate : "__-__-__"}
-                </strong>
-              </div>
+        {applicant?.type !== "Employer" && (
+          <AccordionDetails>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={4}>
+                <center>
+                  Phone Number
+                  <br />
+                  <strong>{applicant?.phonenumber}</strong>
+                </center>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <center>
+                  Current Job <br />
+                  <strong>{applicant?.currjobtitle}</strong>
+                </center>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <center>
+                  Desired job <br />
+                  <strong>{applicant?.desiredjob}</strong>
+                </center>
+              </Grid>
 
-              <div
-                style={{
-                  textDecoration: "underline",
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
+              <Grid item xs={12} sm={6} md={4}>
+                <center>
+                  Years of experience <br />
+                  <strong>{applicant?.yearsofexp}</strong>
+                </center>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <center>
+                  Educational Background <br />
+                  <strong>{applicant?.educationalbg}</strong>
+                </center>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <center>
+                  Industry <br />
+                  <strong>{applicant?.industry}</strong>
+                </center>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                onClick={openCV}
+                sx={{ cursor: "pointer", color: "blue", textDecoration: "none" }}
               >
-                Click to choose a time
+                <center>
+                  Open CV <br />
+                </center>
+              </Grid>
+            </Grid>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "end",
+                gap: "2px",
+                marginTop: "14px",
+                marginRight: "40px",
+              }}
+              onClick={() => setShowModal(true)}
+            >
+              <div>
+                <div>
+                  <strong>
+                    Selected Date: {selectedDate ? selectedDate : "__-__-__"}
+                  </strong>
+                </div>
+
+                <div
+                  style={{
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  Click to choose a time
+                </div>
               </div>
             </div>
-          </div>
-        </AccordionDetails>
-        {showModal && (
-          <Modal>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <Calendar
-                onClose={closeModal}
-                setSelectedDate={submitSelectedDate}
-              />
-            </div>
-          </Modal>
+
+            {showModal && (
+              <Modal>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Calendar
+                    onClose={closeModal}
+                    setSelectedDate={submitSelectedDate}
+                  />
+                </div>
+              </Modal>
+            )}
+          </AccordionDetails>
         )}
       </Accordion>
     </div>
   );
+
 };
 
 export default Applicant;

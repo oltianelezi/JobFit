@@ -7,6 +7,7 @@ const JobCard = ({
   handleApplicants,
   handleApply,
   userType,
+  isAppliedJobs
 }) => {
   const userId = localStorage.getItem("userId");
   const [userApplied, setUserApplied] = useState(false);
@@ -41,7 +42,6 @@ const JobCard = ({
   const handleApplyClick = async (jobId) => {
     try {
       await handleApply(jobId);
-      // Re-check the application status after applying
       await checkApplied();
     } catch (err) {
       console.error("Error applying to job", err);
@@ -70,7 +70,32 @@ const JobCard = ({
   }, [item.jobId, handleApply, userId, userApplied]);
 
   const buttonConfig = useCallback(() => {
-    if (userType === "Employee") {
+    if (isAppliedJobs) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            marginTop: "10px",
+          }}
+        >
+          <Button
+            name={"Recruiter Information"}
+            style={{
+              minWidth: "100px",
+              height: "30px",
+              backgroundColor:"#008080",
+              cursor: "pointer",
+              border: "none",
+              borderRadius: "10px",
+              color: "white",
+            }}
+            handleClick={() => handleApplicants(item.jobId)}
+          />
+        </div>
+      );
+    }
+    else if (userType === "Employee") {
       return (
         <div
           style={{

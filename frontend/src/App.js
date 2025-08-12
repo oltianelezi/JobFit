@@ -13,6 +13,7 @@ import AddJobContainer from "./pages/AddJobContainer";
 import ProtectiveRoute from "./pages/ProtectiveRoute";
 import Navbar from "./layout/navbar/Navbar";
 import SearchContainer from "./pages/SearchContainer";
+import AppliedJobsContainer from "./pages/AppliedJobsContainer";
 
 function App() {
   localStorage.setItem("showNavbar", true);
@@ -43,6 +44,14 @@ function App() {
             element={
               <ProtectiveRoute employee={true}>
                 <AddJobContainer />
+              </ProtectiveRoute>
+            }
+          />
+          <Route
+            path="/appliedJobs"
+            element={
+              <ProtectiveRoute employee={false}>
+                <AppliedJobsContainer />
               </ProtectiveRoute>
             }
           />

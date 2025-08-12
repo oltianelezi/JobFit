@@ -44,12 +44,20 @@ const Vertical = () => {
             fontSize: "18px",
           }}
         >
-          {userType !== "Employee" && (
+          {userType === "Employer" && (
             <div
               style={{ cursor: "pointer" }}
               onClick={() => handleNavigate("/addjob")}
             >
               Add Jobs
+            </div>
+          )}
+          {userType === "Employee" && (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => handleNavigate("/appliedJobs")}
+            >
+              Applied Jobs
             </div>
           )}
           <div

@@ -80,4 +80,12 @@ public class JobController : ControllerBase
         return Ok();
     }
 
+    [HttpGet("getJobsAppliedTo/{UserId}")]
+    public IActionResult GetJobsAppliedTo(int UserId)
+    {
+        var jobs = _jobRepository.GetJobsAppliedTo(UserId);
+
+        return Ok(jobs);
+    }
+
 }
