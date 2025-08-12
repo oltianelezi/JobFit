@@ -128,4 +128,14 @@ public class UserController : ControllerBase
         return Ok();
     }
 
+    [HttpGet("getEmployerInfo/{jobId}")]
+    public IActionResult GetEmployerInfo(int JobId)
+    {
+        var user = _userRepository.GetEmployerInfo(JobId);
+        if (user != null)
+            return Ok(user);
+        else
+            return NotFound();
+    }
+
 }

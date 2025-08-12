@@ -2,7 +2,7 @@ import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import Applicant from "./Applicant";
 
-const Applicants = ({ applicants, closeApplicants, jobId }) => {
+const Applicants = ({ applicants, closeApplicants, jobId, isEmployerInfo }) => {
   return (
     <div>
       <div
@@ -13,7 +13,7 @@ const Applicants = ({ applicants, closeApplicants, jobId }) => {
         }}
       >
         <div style={{ fontSize: "25px", color: "white" }}>
-          List of Applicants
+          {isEmployerInfo ? "Recruiter Information" : "List of Applicants"}
         </div>
         <CloseIcon
           style={{ color: "white", cursor: "pointer", marginTop: "6px" }}
@@ -36,7 +36,10 @@ const Applicants = ({ applicants, closeApplicants, jobId }) => {
           className="applicantsList"
           style={{ maxHeight: "300px", overflowY: "auto" }}
         >
-          {applicants.map((applicant) => {                      
+          {applicants.map((applicant) => {
+            console.log(applicants);
+            console.log(applicant);
+
             return <Applicant user={applicant} key={applicant} jobId={jobId} />;
           })}
         </div>

@@ -160,11 +160,49 @@ public class JobRepository
             connection.Open();
             var command = connection.CreateCommand();
 
-            command = connection.CreateCommand();
             command.CommandText = "DELETE FROM Jobs WHERE JobId = @jobId";
             command.Parameters.AddWithValue("@jobId", JobId);
 
             command.ExecuteNonQuery();
         }
+    }
+
+    public List<Job> GetJobsAppliedTo(int UserId)
+    {
+        List<Job> jobs = new List<Job>();
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+
+            command.CommandText = @"
+            SELECT *
+            FROM Jobs
+            JOIN Applications ON Jobs.jobId = Applications.jobId
+            WHERE Applications.userId = @userId
+            ";
+
+            command.Parameters.AddWithValue("@userId", UserId);
+
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    jobs.Add(new Job
+                    {
+                        Position = reader.GetString(0),
+                        Company = reader.GetString(1),
+                        Location = reader.GetString(2),
+                        DatePosted = DateOnly.Parse(reader.GetString(3)),
+                        JobId = reader.GetInt32(4),
+                        UserId = reader.GetInt32(5),
+                        Jobstatus = reader.GetString(6),
+                        Jobtype = reader.GetString(7)
+                    });
+                }
+            }
+        }
+        return jobs;
     }
 }
