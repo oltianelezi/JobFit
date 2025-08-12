@@ -78,4 +78,28 @@ public class ApplicationRepository
         return Applicants;
 
     }
+
+    public void SetInterviewDate(Application application)
+    {
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            System.Console.WriteLine(application.JobId);
+            System.Console.WriteLine(application.UserId);
+            connection.Open();
+            var command = connection.CreateCommand();
+
+            command.CommandText = @"
+            UPDATE Applications
+            SET interviewDate = @interviewDate
+            WHERE userId = @userId
+            AND jobId = @jobId;
+            ";
+
+            command.Parameters.AddWithValue("@userId", application.UserId);
+            command.Parameters.AddWithValue("@jobId", application.JobId);
+            command.Parameters.AddWithValue("@interviewDate", application.InterviewDate);
+
+            command.ExecuteNonQuery();
+        }
+    }
 }

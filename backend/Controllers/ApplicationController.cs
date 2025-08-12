@@ -1,4 +1,5 @@
 using backend.DTOs.Application;
+using backend.Models;
 using backend.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,16 @@ namespace backend.Controllers
             var Applicants = _applicationRepository.GetApplicants(JobId);
 
             return Ok(new { applicants = Applicants });
+        }
+
+        [HttpPut("setInterviewDate")]
+        public IActionResult SetInterviewDate([FromBody] Application request)
+        {
+            System.Console.WriteLine(request.JobId);
+            System.Console.WriteLine(request.UserId);
+            _applicationRepository.SetInterviewDate(request);
+
+            return Ok();
         }
     }
 }

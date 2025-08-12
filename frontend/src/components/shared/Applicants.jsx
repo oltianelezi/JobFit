@@ -2,7 +2,7 @@ import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import Applicant from "./Applicant";
 
-const Applicants = ({ applicants, closeApplicants }) => {
+const Applicants = ({ applicants, closeApplicants, jobId }) => {
   return (
     <div>
       <div
@@ -36,8 +36,8 @@ const Applicants = ({ applicants, closeApplicants }) => {
           className="applicantsList"
           style={{ maxHeight: "300px", overflowY: "auto" }}
         >
-          {applicants.map((applicant) => {            
-            return <Applicant user={applicant} />;
+          {applicants.map((applicant) => {                      
+            return <Applicant user={applicant} key={applicant} jobId={jobId} />;
           })}
         </div>
       )}

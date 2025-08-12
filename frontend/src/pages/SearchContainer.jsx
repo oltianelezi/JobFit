@@ -189,10 +189,7 @@ const SearchContainer = () => {
     const response = await fetch(`https://localhost:7000/application/applicants/${jobId}`)
     const data = await response.json();
 
-    console.log(data);
-    console.log(data.applicants);
-
-
+    setJobToUpdate(jobId);
     setShowApplicants(true);
     setApplicants(data.applicants);
   };
@@ -321,6 +318,7 @@ const SearchContainer = () => {
           <Applicants
             closeApplicants={closeApplicants}
             applicants={applicants}
+            jobId={jobToUpdate}
           />
         </Modal>
       )}
