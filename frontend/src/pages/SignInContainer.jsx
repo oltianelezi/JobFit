@@ -40,9 +40,7 @@ const SignInContainer = () => {
       if (response.ok) {
         localStorage.setItem("userId", data.userId);
         setIsLoading(false);
-        navigate("/jobs");
-        console.log(data.userId);
-        
+        navigate("/jobs");        
       }
       else {
         enqueueSnackbar("User not found!", { variant: "error" });

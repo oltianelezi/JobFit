@@ -36,10 +36,7 @@ const Applicants = ({ applicants, closeApplicants, jobId, isEmployerInfo }) => {
           className="applicantsList"
           style={{ maxHeight: "300px", overflowY: "auto" }}
         >
-          {applicants.map((applicant) => {
-            console.log(applicants);
-            console.log(applicant);
-
+          {applicants.map((applicant) => {            
             return <Applicant user={applicant} key={applicant} jobId={jobId} />;
           })}
         </div>

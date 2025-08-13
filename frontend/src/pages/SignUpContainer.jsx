@@ -63,8 +63,7 @@ const SignUpContainer = () => {
         body: JSON.stringify(formData)
       }
     )
-    console.log(formData);
-
+    
     if (!response.ok) {
       var msg = await response.json();
       enqueueSnackbar(msg.message, {

@@ -45,11 +45,17 @@ namespace backend.Controllers
         [HttpPut("setInterviewDate")]
         public IActionResult SetInterviewDate([FromBody] Application request)
         {
-            System.Console.WriteLine(request.JobId);
-            System.Console.WriteLine(request.UserId);
             _applicationRepository.SetInterviewDate(request);
 
             return Ok();
+        }
+
+        [HttpPost("getInterviewDate")]
+        public IActionResult GetInterviewDate([FromBody] ApplicationRequest request)
+        {
+            var InterviewDate = _applicationRepository.GetInterviewDate(request);
+            
+            return Ok(new { interviewDate = InterviewDate });
         }
     }
 }
