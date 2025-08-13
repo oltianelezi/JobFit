@@ -83,7 +83,6 @@ const SearchContainer = () => {
       })
 
     const result = await response.json();
-    console.log(result);
 
     const finalResult = result.map(job => ({
       position: job.position,
@@ -116,7 +115,6 @@ const SearchContainer = () => {
 
   const handleEdit = async (jobId) => {
     setJobToUpdate(jobId);
-    console.log(jobId);
 
     const response = await fetch(`https://localhost:7000/job/${jobId}`);
     const data = await response.json();
@@ -165,7 +163,6 @@ const SearchContainer = () => {
       userId: userId,
       jobId: jobId
     }
-    console.log(payload);
 
     const response = await fetch('https://localhost:7000/application/apply', {
       method: "POST",
@@ -189,10 +186,7 @@ const SearchContainer = () => {
     const response = await fetch(`https://localhost:7000/application/applicants/${jobId}`)
     const data = await response.json();
 
-    console.log(data);
-    console.log(data.applicants);
-
-
+    setJobToUpdate(jobId);
     setShowApplicants(true);
     setApplicants(data.applicants);
   };
@@ -321,6 +315,7 @@ const SearchContainer = () => {
           <Applicants
             closeApplicants={closeApplicants}
             applicants={applicants}
+            jobId={jobToUpdate}
           />
         </Modal>
       )}

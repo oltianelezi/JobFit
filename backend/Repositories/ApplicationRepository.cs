@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using backend.Models;
 using backend.Data;
+using backend.DTOs.Application;
 
 namespace backend.Repositories;
 
@@ -83,8 +84,6 @@ public class ApplicationRepository
     {
         using (var connection = SQLiteConnectionFactory.CreateConnection())
         {
-            System.Console.WriteLine(application.JobId);
-            System.Console.WriteLine(application.UserId);
             connection.Open();
             var command = connection.CreateCommand();
 
@@ -101,5 +100,35 @@ public class ApplicationRepository
 
             command.ExecuteNonQuery();
         }
+    }
+
+    public DateOnly? GetInterviewDate(ApplicationRequest request)
+    {
+        using (var connection = SQLiteConnectionFactory.CreateConnection())
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+
+            command.CommandText = @"
+            SELECT interviewDate
+            FROM Applications
+            WHERE userId = @userId
+            AND jobId = @jobId
+            ";
+            
+
+            command.Parameters.AddWithValue("@userId", request.UserId);
+            command.Parameters.AddWithValue("@jobId", request.JobId);
+
+
+            using (var reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                    if (!reader.IsDBNull(0))
+                        return DateOnly.Parse(reader.GetString(0));
+            }
+        }
+
+        return null;
     }
 }

@@ -1,10 +1,11 @@
-import { Grid } from "@mui/material";
+import { Grid, Box } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React, { useEffect, useState } from "react";
+
 
 import Modal from "./Modal";
 import Calendar from "./Calendar";
@@ -47,6 +48,26 @@ const Applicant = ({ user, jobId }) => {
     const data = await response.json();
 
     setApplicant(data);
+
+    const payload = {
+      UserId: data.type === "Employer" ? localStorage.getItem("userId") : userId,
+      JobId: jobId,
+    };
+
+    const interviewResponse = await fetch('https://localhost:7000/application/getInterviewDate', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (interviewResponse.ok) {
+      const date = await interviewResponse.json();
+      console.log(date);
+
+      setSelectedDate(date.interviewDate);
+    }
   };
 
   useEffect(() => {
@@ -83,19 +104,27 @@ const Applicant = ({ user, jobId }) => {
           },
         }}
       >
-
-
         <AccordionSummary
           expandIcon={applicant?.type !== "Employer" ? <ExpandMoreIcon /> : null}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          {applicant?.firstname && (
-            <Typography>
-              {applicant.firstname} {applicant.lastname} - {applicant.email}
-            </Typography>
-          )}
+          <Box sx={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center" }}>
+            {applicant?.firstname && (
+              <Typography>
+                {applicant.firstname} {applicant.lastname} - {applicant.email}
+              </Typography>
+            )}
+
+            {applicant?.type === "Employer" && (
+              <Typography>
+               Interview Date: {selectedDate ? selectedDate : "Not set"}
+              </Typography>
+            )}
+          </Box>
         </AccordionSummary>
+
+
 
         {applicant?.type !== "Employer" && (
           <AccordionDetails>

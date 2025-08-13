@@ -102,7 +102,6 @@ const ProfileContainer = () => {
       profileForm.cv)
     ) {
       const payload = { ...profileForm, userId: userId };
-      console.log(payload);
 
       const response = await fetch("https://localhost:7000/user/update",
         {
